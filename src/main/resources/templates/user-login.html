@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>VeriQueue | Login</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/images/veriQueue.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+        p.description {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        .form-box {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 350px;
+        }
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .error {
+            color: red;
+        }
+        .footer {
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+    color: #fff;
+    font-weight: 300;
+    background-color: rgba(0,0,0,0.4);
+    padding: 10px 0;
+}
+.footer a {
+    color: #fff;
+    text-decoration: underline;
+}
+    </style>
+</head>
+<body>
+	
+    <div class="form-box">
+	<p class="description">
+            VeriQueue is a smart, digital token management system that replaces traditional queueing methods.
+            Enter your details to receive a secure OTP and get instant access to your queue status.
+        </p>
+	<form th:action="@{/user/send-otp}" method="post">
+		
+		<label>Email:</label><br>
+        <input type="email" name="email" required><br><br>
+
+        <label>Contact Number:</label><br>
+        <input type="text" name="contact" required><br><br>
+
+        <button type="submit">Send OTP</button>
+        
+	</form>
+	
+	<div th:if="${error}">
+        <p style="color: red;" th:text="${error}"></p>
+    </div>
+
+<footer class="footer">
+    &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+</footer>
+</body>
+	
+	
+</html>

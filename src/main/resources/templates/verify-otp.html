@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>VeriQueue | Verify OTP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/images/OTP.png') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-box {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 380px;
+        }
+
+        input, button {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1c7430;
+        }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 300;
+            background-color: rgba(0,0,0,0.4);
+            padding: 10px 0;
+        }
+        .footer a {
+            color: #fff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-box">
+        <h2>Verify OTP</h2>
+        <p>OTP sent to: <strong th:text="${email}"></strong></p>
+
+        <form th:action="@{/user/verify-otp}" method="post">
+            <input type="hidden" name="email" th:value="${email}">
+            <input type="text" name="otp" placeholder="Enter OTP" required>
+            <button type="submit">Verify OTP</button>
+        </form>
+
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+    </div>
+
+    <footer class="footer">
+        &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+    </footer>
+</body>
+</html>
