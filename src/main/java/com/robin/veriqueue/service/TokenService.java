@@ -33,7 +33,7 @@ public class TokenService {
 		
 		if(optionalUser.isEmpty())
 			throw new RuntimeException("User not found, please check email !!");
-		
+				
 		int maxToken = 100;
 		
 		List<Token> tokens = tokenRepository.findAll();
@@ -49,7 +49,6 @@ public class TokenService {
 				token.setCreatedAt(LocalDateTime.now());
 				token.setStatus(TokenStatus.ACTIVE);
 				token.setTokenNumber(tokenNumber);
-				
 			return tokenRepository.save(token);
 	}
 

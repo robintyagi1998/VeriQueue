@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Users - VeriQueue</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/images/token.png');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+        }
+
+        header, footer {
+            background-color: rgba(0,0,0,0.7);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        table {
+            width: 90%;
+            margin: 2rem auto;
+            border-collapse: collapse;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid #444;
+        }
+
+        button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            color: #fff;
+        }
+
+        .call-btn {
+            background-color: #28a745;
+        }
+
+        .expire-btn {
+            background-color: #dc3545;
+        }
+        .call-btn {
+    background-color: #28a745;
+    padding: 0.5rem 1rem;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.call-btn:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>VeriQueue - All Users & Active Tokens</h1>
+</header>
+
+<table>
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Active Token</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.email}"></td>
+            <td th:text="${user.contact}"></td>
+             <td th:text="${activeTokens[user.id] != null} ? ${activeTokens[user.id].tokenNumber} : 'None'"></td>
+            <td>
+                <form th:if="${activeTokens[user.id] != null}" 
+      			th:action="@{/admin/token/call}" method="post" style="display:inline;">
+    				<input type="hidden" th:name="tokenId" th:value="${activeTokens[user.id].id}" />
+    				<button type="submit" class="call-btn"
+            		th:text="${activeTokens[user.id].status.name() == 'CALLED' ? 'Called' : 'Call'}"
+            		th:disabled="${activeTokens[user.id].status.name() == 'CALLED'}"></button>
+				</form>
+        		
+                <form th:action="@{/admin/token/expire}" method="post" style="display:inline;">
+                    <input type="hidden" th:name="tokenId" th:value="${activeTokens[user.id]?.id}" />
+                    <button type="submit" class="expire-btn" th:disabled="${activeTokens[user.id] == null}">Expire</button>
+                </form>
+          
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<footer>
+    &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+</footer>
+
+</body>
+</html>

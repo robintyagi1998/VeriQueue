@@ -1,5 +1,6 @@
 package com.robin.veriqueue.controller;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.robin.veriqueue.model.Token;
+import com.robin.veriqueue.model.TokenStatus;
 import com.robin.veriqueue.model.User;
+import com.robin.veriqueue.repository.TokenRepository;
 import com.robin.veriqueue.repository.UserRepository;
 import com.robin.veriqueue.service.OTPService;
 import com.robin.veriqueue.service.TokenService;
@@ -22,6 +25,9 @@ public class UserWebController {
 
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private TokenRepository tokenRepository;
 	
 	@Autowired
 	private OTPService otpService;
@@ -92,9 +98,16 @@ public class UserWebController {
 	}
 	
 	@PostMapping("/generate-token")
-	public String generateToken(@RequestParam String email, Model model) {
+	public String generateToken(@RequestParam String email, Model model) throws Exception{
 		Optional<User> existingUser=userRepository.findByEmail(email); 
 		User user=existingUser.get();
+		
+		Token existingToken= tokenRepository.findByUserAndStatusIn(user,Arrays.asList(TokenStatus.ACTIVE,TokenStatus.CALLED));
+		if(existingToken != null) {
+			model.addAttribute("email",user.getEmail());
+			model.addAttribute("message","You already have a token : "+existingToken.getTokenNumber());
+			return "token-exists";
+		}
 		Token token=tokenService.generateToken(email);
 		model.addAttribute("user",user);
 		model.addAttribute("tokenNumber",token.getTokenNumber());

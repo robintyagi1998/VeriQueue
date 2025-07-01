@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard - VeriQueue</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/images/token.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        header, footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .dashboard-container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .stat-card {
+            flex: 1 1 45%;
+            background-color: #222;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        a {
+            color: #00d4ff;
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+    </style>
+    <meta http-equiv="refresh" content="25">
+</head>
+<body>
+
+<header>
+    <h1>VeriQueue Admin Dashboard</h1>
+</header>
+
+<div class="dashboard-container">
+    <h2>Welcome, <span th:text="${adminUsername}"></span></h2>
+
+    <div class="stats">
+        <div class="stat-card">
+            <h3>Total Users</h3>
+            <p th:text="${totalUsers}"></p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Tokens</h3>
+            <p th:text="${totalTokens}"></p>
+        </div>
+        <div class="stat-card">
+            <h3>Active Tokens</h3>
+            <p th:text="${activeTokens}"></p>
+        </div>
+        <div class="stat-card">
+            <h3>Expired Tokens</h3>
+            <p th:text="${expiredTokens}"></p>
+        </div>
+    </div>
+
+    <hr style="margin: 2rem 0; border: 1px solid #555;">
+
+  <div class="button-group">
+        <form th:action="@{/admin/tokens}" method="post" style="display:inline;">
+            <button type="submit" class="btn">View All Tokens</button>
+        </form>
+        <form th:action="@{/admin/users}" method="get" style="display:inline;">
+            <button type="submit" class="btn">View Users</button>
+        </form>
+        <form th:action="@{/admin/logout}" method="get" style="display:inline;">
+            <button type="submit" class="btn">Logout</button>
+        </form>
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+</footer>
+
+</body>
+</html>

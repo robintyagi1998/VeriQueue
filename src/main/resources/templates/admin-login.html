@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Login - VeriQueue</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/images/VeriQueue.png');
+            background-size: cover;
+            background-position: center;
+            color: #fff;
+        }
+
+        header, footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            border-radius: 10px;
+        }
+
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>VeriQueue Admin Panel</h1>
+</header>
+
+<div class="container">
+    <h2 style="text-align:center;">Admin Login</h2>
+    <form th:action="@{/admin/login}" method="post">
+        <label>Username:</label>
+        <input type="email" name="username" required />
+
+        <label>Password:</label>
+        <input type="password" name="password" required />
+
+        <div th:if="${param.error}" class="error-message">
+            Invalid email or password.
+        </div>
+
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+<footer>
+    &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+</footer>
+
+</body>
+</html>

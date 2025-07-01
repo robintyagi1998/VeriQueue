@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Token Already Exists</title>
+</head>
+<body>
+    <h2 th:text="${message}"></h2>
+    <a th:href="@{'/user'(email=${email})}">Go to Dashboard</a>
+</body>
+</html>
