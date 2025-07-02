@@ -1,11 +1,14 @@
 package com.robin.veriqueue.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -62,12 +65,14 @@ public class AdminController {
 		long totalTokens=tokenRepository.count();
 		long activeTokens=tokenRepository.countByStatus(TokenStatus.ACTIVE);
 		long expiredTokens=tokenRepository.countByStatus(TokenStatus.EXPIRED);
+		long calledTokens = tokenRepository.countByStatus(TokenStatus.CALLED);
 		
 		model.addAttribute("adminUsername", admin.getUsername());
 		model.addAttribute("totalUsers", totalUsers);
 		model.addAttribute("totalTokens", totalTokens);
 		model.addAttribute("activeTokens", activeTokens);
 		model.addAttribute("expiredTokens", expiredTokens);
+		model.addAttribute("calledTokens", calledTokens);
 		
 		return "admin-dashboard";
 	}
@@ -102,6 +107,19 @@ public class AdminController {
 		
 	}
 	
+	@GetMapping("/tokens")
+	public String viewTokens(HttpSession session,Model model) {
+		Admin admin=(Admin)session.getAttribute("admin");
+		if(admin==null)
+		{session.invalidate();
+		return "redirect:/admin/login";
+		}
+		List<Token> tokens=tokenRepository.findAllByOrderByCreatedAtDesc();
+		model.addAttribute("tokens",tokens);
+		return "view-tokens";
+	}
+	
+	
 	@PostMapping("/token/expire")
 	public String expireToken(@RequestParam Long tokenId) {
 	    Token token = tokenRepository.findById(tokenId).orElse(null);
@@ -123,5 +141,29 @@ public class AdminController {
 	    }
 	    return "redirect:/admin/users";
 	}
+	
+	@GetMapping("/tokens/filter")
+	public String viewFilteredTokens(@RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,Model model) {
+		
+		LocalDateTime startOfDay=date.atStartOfDay();
+		LocalDateTime endOfDay= date.atTime(LocalTime.MAX);
+		
+		List<Token> tokens = tokenRepository.findByCalledAtBetween(startOfDay, endOfDay);
+		
+		List<String> userEmails=new ArrayList<>();
+		
+		for(Token token: tokens) {
+			if(!userEmails.contains(token.getUser().getEmail()))
+				userEmails.add(token.getUser().getEmail());
+		}
+		   int distinctUserCount = userEmails.size();
+
+		    model.addAttribute("tokens", tokens);
+		    model.addAttribute("filterDate", date);
+		    model.addAttribute("filteredUserCount", distinctUserCount);
+		
+		return "view-tokens";
+	}
+	
 	
 }

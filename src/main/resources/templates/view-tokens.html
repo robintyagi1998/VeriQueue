@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Tokens - VeriQueue Admin</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-image: url('/images/token.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+        }
+
+        header, footer {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 30px auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 2rem;
+            border-radius: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .btn {
+            background-color: #00d4ff;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #00b0cc;
+        }
+
+        .filter-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .filter-section input[type="date"] {
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: none;
+            margin-right: 10px;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>View Tokens - VeriQueue Admin</h1>
+</header>
+
+<div class="container">
+
+    <!-- Date Filter Form -->
+    <form th:action="@{/admin/tokens/filter}" method="get" class="filter-section">
+        <label for="date">Select Date:</label>
+        <input type="date" id="date" name="date" required>
+        <button type="submit" class="btn">Filter Tokens</button>
+    </form>
+
+    <!-- Filter Info Display -->
+    <div th:if="${filterDate != null}" style="text-align:center; margin-bottom: 1rem;">
+        <h3>Tokens Called on <span th:text="${#temporals.format(filterDate, 'dd MMM yyyy')}"></span></h3>
+        <p>Total Users Called: <strong th:text="${filteredUserCount}">0</strong></p>
+        <a th:href="@{/admin/tokens}" class="btn">Clear Filter</a>
+    </div>
+
+    <!-- Token Table -->
+    <table>
+        <thead>
+            <tr>
+                <th>Token Number</th>
+                <th>User Email</th>
+                <th>Status</th>
+                <th>Created At</th>
+                <th>Called At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="token : ${tokens}">
+                <td th:text="${token.tokenNumber}">Token</td>
+                <td th:text="${token.user.email}">Email</td>
+                <td th:text="${token.status}">Status</td>
+                <td th:text="${token.createdAt != null ? #temporals.format(token.createdAt, 'dd-MM-yyyy HH:mm') : 'N/A'}">created time</td>
+			<td th:text="${token.calledAt != null ? #temporals.format(token.calledAt, 'dd-MM-yyyy HH:mm') : 'Not Called'}">called time</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Back to Dashboard -->
+    <div class="back-button">
+        <a th:href="@{/admin/dashboard}" class="btn">Back to Dashboard</a>
+    </div>
+</div>
+
+<footer>
+    &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+</footer>
+
+</body>
+</html>

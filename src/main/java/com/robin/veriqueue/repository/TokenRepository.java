@@ -24,4 +24,8 @@ public interface TokenRepository extends JpaRepository<Token,Long>{
 	User findByUser(Optional<User> optionalUser);
 
 	Token findByUserAndStatusIn(User user, List<TokenStatus> asList);
+
+	List<Token> findAllByOrderByCreatedAtDesc();
+
+	List<Token> findByCalledAtBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 }

@@ -26,19 +26,46 @@
             border-radius: 10px;
         }
 
+       
         .stats {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 1rem;
+            margin-bottom: 2rem;
         }
 
         .stat-card {
-            flex: 1 1 45%;
             background-color: #222;
             padding: 1rem;
             border-radius: 8px;
             text-align: center;
+            min-height: 100px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-card h3 {
+            margin: 0 0 0.5rem;
+            font-size: 1rem;
+        }
+
+        .stat-card p {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .btn {
+            background-color: #00d4ff;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background-color: #00b0cc;
         }
 
         a {
@@ -75,12 +102,16 @@
             <h3>Expired Tokens</h3>
             <p th:text="${expiredTokens}"></p>
         </div>
+        <div class="stat-card">
+            <h3>Called Tokens</h3>
+            <p th:text="${calledTokens}"></p>
+        </div>
     </div>
 
     <hr style="margin: 2rem 0; border: 1px solid #555;">
 
   <div class="button-group">
-        <form th:action="@{/admin/tokens}" method="post" style="display:inline;">
+        <form th:action="@{/admin/tokens}" method="get" style="display:inline;">
             <button type="submit" class="btn">View All Tokens</button>
         </form>
         <form th:action="@{/admin/users}" method="get" style="display:inline;">
