@@ -54,7 +54,7 @@
 <body>
     <div class="dashboard">
         <h2 class="heading">Welcome to VeriQueue</h2>
-        <div class="info">Email: <strong th:text="${user.email}"></strong></div>
+        <div class="info">Name: <strong th:text="${user.name}"></strong></div>
         <div class="info">Contact: <strong th:text="${user.contact}"></strong></div>
         
         <form th:action="@{/user/generate-token}" method="post">

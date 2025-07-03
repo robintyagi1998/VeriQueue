@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,20 +46,12 @@ public class AdminController {
 		return "admin-login";
 	}
 	
-	@PostMapping("/login")
-	public String processLogin(@RequestParam String username,@RequestParam String password, HttpSession session) {
-		Admin admin= adminRepository.findByUsernameAndPassword(username,password);
-		if(admin != null) {
-			session.setAttribute("admin", admin);
-			return "redirect:/admin/dashboard";
-		}
-		else
-		return "redirect:/admin/login?error=true";
-	}
-	
 	@GetMapping("/dashboard")
 	public String adminDashboard(HttpSession session,Model model) {
-		Admin admin=(Admin) session.getAttribute("admin");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    String username = auth.getName(); 
+	    Admin admin = adminRepository.findByUsername(username);
+		
 		if(admin==null)
 			return "redirect:/admin/dashboard";
 		
@@ -77,25 +71,21 @@ public class AdminController {
 		return "admin-dashboard";
 	}
 	
-	@GetMapping("/logout")
-	public String adminLogout(HttpSession session) {
-		session.invalidate();
-		return "redirect:/admin/login";
-	}
-	
 	@GetMapping("/users")
 	public String viewAllUsers(HttpSession session, Model model) {
-		Admin admin=(Admin) session.getAttribute("admin");
-		if(admin==null) {
-			session.invalidate();
-			return "redirect:/admin/login";
-		}
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    String username = auth.getName(); 
+	    Admin admin = adminRepository.findByUsername(username);
+		
+		if(admin==null)
+			return "redirect:/admin/dashboard";
 		
 		List<User> users=userRepository.findAll();
 		Map<Long,Token> usersActiveTokens=new HashMap<>();
 		
 		for(User user: users) {
-			Token token=tokenRepository.findByUserAndStatus(user,TokenStatus.ACTIVE);
+			//Token token=tokenRepository.findByUserAndStatus(user,TokenStatus.ACTIVE);
+			Token token = tokenRepository.findTopByUserOrderByCreatedAtDesc(user);
 			if(token !=null) {
 				usersActiveTokens.put(user.getId(), token);
 			}
@@ -109,11 +99,12 @@ public class AdminController {
 	
 	@GetMapping("/tokens")
 	public String viewTokens(HttpSession session,Model model) {
-		Admin admin=(Admin)session.getAttribute("admin");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	    String username = auth.getName(); 
+	    Admin admin = adminRepository.findByUsername(username);
+		
 		if(admin==null)
-		{session.invalidate();
-		return "redirect:/admin/login";
-		}
+			return "redirect:/admin/dashboard";
 		List<Token> tokens=tokenRepository.findAllByOrderByCreatedAtDesc();
 		model.addAttribute("tokens",tokens);
 		return "view-tokens";
@@ -132,7 +123,7 @@ public class AdminController {
 
 	@PostMapping("/token/call")
 	public String callToken(@RequestParam Long tokenId) {
-	    // For now, just a placeholder — you can log it or flag it
+	    
 	    Token token = tokenRepository.findById(tokenId).orElse(null);
 	    if (token != null && token.getStatus()==TokenStatus.ACTIVE) {
 	    	token.setCalledAt(LocalDateTime.now());

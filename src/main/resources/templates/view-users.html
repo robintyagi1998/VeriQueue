@@ -37,6 +37,39 @@
             cursor: pointer;
             color: #fff;
         }
+         .btn {
+            background-color: #00d4ff;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #00b0cc;
+        }
+
+        .filter-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .filter-section input[type="date"] {
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: none;
+            margin-right: 10px;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 2rem;
+        }
 
         .call-btn {
             background-color: #28a745;
@@ -45,20 +78,11 @@
         .expire-btn {
             background-color: #dc3545;
         }
-        .call-btn {
-    background-color: #28a745;
-    padding: 0.5rem 1rem;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
+        .back-button {
+            text-align: center;
+            margin-top: 2rem;
+        }
 
-.call-btn:disabled {
-    background-color: #888;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
     </style>
 </head>
 <body>
@@ -80,26 +104,33 @@
         <tr th:each="user : ${users}">
             <td th:text="${user.email}"></td>
             <td th:text="${user.contact}"></td>
-             <td th:text="${activeTokens[user.id] != null} ? ${activeTokens[user.id].tokenNumber} : 'None'"></td>
+            <td th:text="${activeTokens[user.id] != null} ? ${activeTokens[user.id].tokenNumber} : 'None'"></td>
             <td>
-                <form th:if="${activeTokens[user.id] != null}" 
-      			th:action="@{/admin/token/call}" method="post" style="display:inline;">
-    				<input type="hidden" th:name="tokenId" th:value="${activeTokens[user.id].id}" />
-    				<button type="submit" class="call-btn"
-            		th:text="${activeTokens[user.id].status.name() == 'CALLED' ? 'Called' : 'Call'}"
-            		th:disabled="${activeTokens[user.id].status.name() == 'CALLED'}"></button>
-				</form>
-        		
-                <form th:action="@{/admin/token/expire}" method="post" style="display:inline;">
-                    <input type="hidden" th:name="tokenId" th:value="${activeTokens[user.id]?.id}" />
-                    <button type="submit" class="expire-btn" th:disabled="${activeTokens[user.id] == null}">Expire</button>
-                </form>
-          
-            </td>
+   			 <form th:if="${activeTokens[user.id] != null}" 
+          		   th:action="@{/admin/token/call}" method="post" style="display:inline;">
+		        <input type="hidden" th:name="tokenId" th:value="${activeTokens[user.id].id}" />
+		        <button type="submit"
+	                class="call-btn"
+	                th:text="${activeTokens[user.id].status.name() == 'CALLED' ? 'Called' : 'Call'}"
+	                th:disabled="${activeTokens[user.id].status.name() == 'CALLED'}"></button>
+    		</form>
+
+   		 <form th:if="${activeTokens[user.id] != null}" 
+         	 th:action="@{/admin/token/expire}" method="post" style="display:inline;">
+        		<input type="hidden" th:name="tokenId" th:value="${activeTokens[user.id].id}" />
+        		<button type="submit"
+                class="expire-btn"
+                th:text="${activeTokens[user.id].status.name() == 'EXPIRED' ? 'Expired' : 'Expire'}"
+                th:disabled="${activeTokens[user.id].status.name() != 'ACTIVE'}"></button>
+    	</form>
+			</td>
         </tr>
     </tbody>
 </table>
-
+<div class="back-button">
+        <a th:href="@{/admin/dashboard}" class="btn">Back to Dashboard</a>
+    </div><br><br>
+ 
 <footer>
     &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
 </footer>

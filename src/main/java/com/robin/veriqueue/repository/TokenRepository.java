@@ -28,4 +28,6 @@ public interface TokenRepository extends JpaRepository<Token,Long>{
 	List<Token> findAllByOrderByCreatedAtDesc();
 
 	List<Token> findByCalledAtBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+	Token findTopByUserOrderByCreatedAtDesc(User user);
 }

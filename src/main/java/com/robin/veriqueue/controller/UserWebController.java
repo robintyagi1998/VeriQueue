@@ -41,13 +41,14 @@ public class UserWebController {
 	}
 	
 	@PostMapping("/send-otp")
-	public String handleLogin(@RequestParam String email,@RequestParam String contact, Model model) {
+	public String handleLogin(@RequestParam String email,@RequestParam String contact,@RequestParam String name,Model model) {
 		Optional<User> existingUser= userRepository.findByEmail(email);
 		
 		if(existingUser.isEmpty()) {
 			User user=new User();
 			user.setEmail(email);
 			user.setContact(contact);
+			user.setName(name);
 			userRepository.save(user);
 		}
 		try {
@@ -105,7 +106,7 @@ public class UserWebController {
 		Token existingToken= tokenRepository.findByUserAndStatusIn(user,Arrays.asList(TokenStatus.ACTIVE,TokenStatus.CALLED));
 		if(existingToken != null) {
 			model.addAttribute("email",user.getEmail());
-			model.addAttribute("message","You already have a token : "+existingToken.getTokenNumber());
+			model.addAttribute("message","Hey "+user.getName()+", You already have a token : "+existingToken.getTokenNumber());
 			return "token-exists";
 		}
 		Token token=tokenService.generateToken(email);
