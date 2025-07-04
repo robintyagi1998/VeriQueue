@@ -59,8 +59,8 @@ spring.mail.password=your_email_password
 ./mvnw spring-boot:run
 
 **Access the app:**
-User: http://localhost:8080/user/login
-Admin: http://localhost:8080/admin/login
+**User**: https://veriqueue-production.up.railway.app/user/login
+**Admin**: https://veriqueue-production.up.railway.app/user/login 
 
 🔒 **Security**
 User area is public and uses OTP + session for auth.
