@@ -3,8 +3,34 @@
 <head>
     <title>Token Already Exists</title>
 </head>
+<style> 
+	body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/images/token.png');
+            background-size: cover;
+        }
+	.footer {
+            position: fixed;
+            bottom: 10px;
+            width: 100%;
+            text-align: center;
+            font-size: 13px;
+            color: #fff;
+            font-weight: 300;
+            background-color: rgba(0,0,0,0.4);
+            padding: 10px 0;
+        }
+
+        .footer a {
+            color: #fff;
+            text-decoration: underline;
+        }</style>
 <body>
-    <h2 th:text="${message}"></h2>
-    <a th:href="@{'/user'(email=${email})}">Go to Dashboard</a>
+    <h2 th:text="${message}"></h2><br>
+    <a th:href="@{'/user'(email=${email})}">Go to Dashboard</a><br>
+ <footer class="footer">
+        &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+    </footer>
 </body>
+
 </html>

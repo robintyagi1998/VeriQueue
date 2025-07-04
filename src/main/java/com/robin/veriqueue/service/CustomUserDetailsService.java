@@ -20,7 +20,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		// TODO Auto-generated method stub
-		System.out.println("Authenticationg ....."+username);
 		
 		Admin admin=adminRepository.findByUsername(username);
 		if(admin==null)

@@ -1,6 +1,8 @@
 package com.robin.veriqueue.controller;
 
-import java.util.Arrays;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import com.robin.veriqueue.repository.TokenRepository;
 import com.robin.veriqueue.repository.UserRepository;
 import com.robin.veriqueue.service.OTPService;
 import com.robin.veriqueue.service.TokenService;
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/user")
@@ -41,7 +44,7 @@ public class UserWebController {
 	}
 	
 	@PostMapping("/send-otp")
-	public String handleLogin(@RequestParam String email,@RequestParam String contact,@RequestParam String name,Model model) {
+	public String handleLogin(@RequestParam String email,@RequestParam String contact,@RequestParam String name,Model model,HttpSession session) {
 		Optional<User> existingUser= userRepository.findByEmail(email);
 		
 		if(existingUser.isEmpty()) {
@@ -53,6 +56,7 @@ public class UserWebController {
 		}
 		try {
 		otpService.generateOtp(email);
+		session.setAttribute("otp_requested", email);
 		}
 		catch(Exception e) {
 			 model.addAttribute("error", "Failed to send OTP. Try again.");
@@ -65,13 +69,17 @@ public class UserWebController {
 	}
 	
 	@GetMapping("/verify-otp")
-	public String otpPage(@RequestParam String email,Model model) {
+	public String otpPage(@RequestParam String email,Model model,HttpSession session) {
 		model.addAttribute("email",email);
+		 String otpRequestedEmail = (String) session.getAttribute("otp_requested");
+		    if (otpRequestedEmail == null || !otpRequestedEmail.equals(email)) {
+		        return "redirect:/user/login";
+		    }
 		return "verify-otp";
 	}
 	
 	@PostMapping("/verify-otp")
-	public String verifyOtp(@RequestParam String email,@RequestParam String otp, Model model) {
+	public String verifyOtp(@RequestParam String email,@RequestParam String otp, Model model,HttpSession session) {
 		
 		if(!otpService.verifyOtp(email, otp))
 		{
@@ -79,14 +87,21 @@ public class UserWebController {
 			model.addAttribute("error", "Invalid or expired OTP. Try again.");
 	        return "verify-otp";
 		}
+		session.setAttribute("verifiedEmail", email);
 		
 		return "redirect:/user?email=" + email;
 	}
 	
 	@GetMapping
-	public String userDashboard(@RequestParam String email, Model model) {
+	public String userDashboard(Model model,HttpSession session) {
 		
-		Optional<User> existingUser=userRepository.findByEmail(email);
+		String verifiedemail = (String) session.getAttribute("verifiedEmail");
+
+	    if (verifiedemail == null) {
+	        return "redirect:/user/login";
+	    }
+	    
+		Optional<User> existingUser=userRepository.findByEmail(verifiedemail);
 		
 		if(existingUser.isPresent()) {
 			User user=existingUser.get();
@@ -99,16 +114,28 @@ public class UserWebController {
 	}
 	
 	@PostMapping("/generate-token")
-	public String generateToken(@RequestParam String email, Model model) throws Exception{
+	public String generateToken(HttpSession session, Model model) throws Exception{
+		String email = (String) session.getAttribute("verifiedEmail");
+
+	    if (email == null) {
+	        return "redirect:/user/login";
+	    }
 		Optional<User> existingUser=userRepository.findByEmail(email); 
 		User user=existingUser.get();
 		
-		Token existingToken= tokenRepository.findByUserAndStatusIn(user,Arrays.asList(TokenStatus.ACTIVE,TokenStatus.CALLED));
-		if(existingToken != null) {
-			model.addAttribute("email",user.getEmail());
-			model.addAttribute("message","Hey "+user.getName()+", You already have a token : "+existingToken.getTokenNumber());
-			return "token-exists";
-		}
+		 List<Token> todaysTokens = tokenRepository.findAllByUserAndCreatedAtBetween(
+		        user,
+		        LocalDate.now().atStartOfDay(),
+		        LocalDate.now().atTime(LocalTime.MAX)
+		    );
+
+		    for (Token t : todaysTokens) {
+		        if (t.getStatus() == TokenStatus.ACTIVE || t.getStatus() == TokenStatus.CALLED) {
+		            model.addAttribute("email", user.getEmail());
+		            model.addAttribute("message", "Hey " + user.getName() + ", You already have a token: " + t.getTokenNumber());
+		            return "token-exists";
+		        }
+		    }
 		Token token=tokenService.generateToken(email);
 		model.addAttribute("user",user);
 		model.addAttribute("tokenNumber",token.getTokenNumber());

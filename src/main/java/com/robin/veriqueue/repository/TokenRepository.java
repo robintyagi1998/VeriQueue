@@ -30,4 +30,12 @@ public interface TokenRepository extends JpaRepository<Token,Long>{
 	List<Token> findByCalledAtBetween(LocalDateTime startOfDay, LocalDateTime endOfDay);
 
 	Token findTopByUserOrderByCreatedAtDesc(User user);
+
+	Token findTopByStatusOrderByCalledAtDesc(TokenStatus status);
+
+	Token findTopByUserAndCreatedAtBetween(User user, LocalDateTime atStartOfDay, LocalDateTime atTime);
+
+	List<Token> findAllByUserAndCreatedAtBetween(User user, LocalDateTime atStartOfDay, LocalDateTime atTime);
+
+
 }

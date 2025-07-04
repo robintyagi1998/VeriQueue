@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Token Display</title>
+    <meta http-equiv="refresh" content="30" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/images/token.png');
+            text-align: center;
+            padding: 2rem;
+            padding-bottom: 80px; /* Space for footer */
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #333;
+        }
+
+        .current-token {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #007bff;
+            margin: 2rem 0 1rem;
+        }
+
+        .user-name {
+            font-size: 1.5rem;
+            color: #444;
+            margin-bottom: 2rem;
+        }
+
+        .upcoming {
+            margin-top: 2rem;
+        }
+
+        table {
+            margin: auto;
+            width: 60%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+         .btn {
+            background-color: #00d4ff;
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            margin: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #00b0cc;
+        }
+
+        .filter-section {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .filter-section input[type="date"] {
+            padding: 6px 10px;
+            border-radius: 5px;
+            border: none;
+            margin-right: 10px;
+        }
+
+        .back-button {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid #ccc;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 1rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        footer a {
+            color: #00f7ff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Now Serving</h1>
+    <div class="current-token" th:text="${currentToken != null} ? ${currentToken.tokenNumber} : 'None'"></div>
+    <div class="user-name" th:if="${currentToken != null}" th:text="'User: ' + ${currentToken.user.name}"></div>
+
+    <div class="upcoming">
+        <h2>Upcoming Tokens</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Token Number</th>
+                    <th>User Name</th>
+                    <th>Generated At</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="token : ${upcomingTokens}">
+                    <td th:text="${token.tokenNumber}"></td>
+                    <td th:text="${token.user.name}"></td>
+                    <td th:text="${#temporals.format(token.createdAt, 'dd-MM-yyyy HH:mm')}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="back-button">
+        <a th:href="@{/admin/dashboard}" class="btn">Back to Dashboard</a>
+    </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Robin Tyagi | Contact: <a href="mailto:crazywonders001@gmail.com">crazywonders001@gmail.com</a>
+    </footer>
+
+</body>
+</html>

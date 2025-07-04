@@ -46,11 +46,18 @@ public class AdminController {
 		return "admin-login";
 	}
 	
-	@GetMapping("/dashboard")
-	public String adminDashboard(HttpSession session,Model model) {
+	public Admin getAdmin() {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 	    String username = auth.getName(); 
 	    Admin admin = adminRepository.findByUsername(username);
+
+	    return admin;
+	}
+	
+	@GetMapping("/dashboard")
+	public String adminDashboard(HttpSession session,Model model) {
+		
+	    Admin admin = getAdmin();
 		
 		if(admin==null)
 			return "redirect:/admin/dashboard";
@@ -73,9 +80,7 @@ public class AdminController {
 	
 	@GetMapping("/users")
 	public String viewAllUsers(HttpSession session, Model model) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    String username = auth.getName(); 
-	    Admin admin = adminRepository.findByUsername(username);
+		Admin admin = getAdmin();
 		
 		if(admin==null)
 			return "redirect:/admin/dashboard";
@@ -99,9 +104,7 @@ public class AdminController {
 	
 	@GetMapping("/tokens")
 	public String viewTokens(HttpSession session,Model model) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	    String username = auth.getName(); 
-	    Admin admin = adminRepository.findByUsername(username);
+		Admin admin = getAdmin();
 		
 		if(admin==null)
 			return "redirect:/admin/dashboard";
@@ -156,5 +159,19 @@ public class AdminController {
 		return "view-tokens";
 	}
 	
+	@GetMapping("/display")
+	public String liveTokenDisplay(Model model) {
+		Admin admin = getAdmin();
+		if(admin==null)
+			return "redirect:/admin/dashboard";
+		
+		Token currentToken=tokenRepository.findTopByStatusOrderByCalledAtDesc(TokenStatus.CALLED);
+		List<Token> upcomingTokens=tokenRepository.findByStatusOrderByCreatedAtAsc(TokenStatus.ACTIVE);
+		
+		model.addAttribute("currentToken",currentToken);
+		model.addAttribute("upcomingTokens",upcomingTokens);
+	
+		return "token-display";
+	}
 	
 }

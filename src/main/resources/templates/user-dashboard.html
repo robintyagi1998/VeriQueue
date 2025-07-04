@@ -49,6 +49,34 @@
             color: #fff;
             text-decoration: underline;
         }
+  .gen-btn, .exit-btn {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 6px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.gen-btn {
+    background-color: #28a745;
+}
+
+.gen-btn:hover {
+    background-color: #218838;
+    transform: scale(1.03);
+}
+
+.exit-btn {
+    background-color: #dc3545;
+}
+
+.exit-btn:hover {
+    background-color: #c82333;
+    transform: scale(1.03);
+}
     </style>
 </head>
 <body>
@@ -58,9 +86,13 @@
         <div class="info">Contact: <strong th:text="${user.contact}"></strong></div>
         
         <form th:action="@{/user/generate-token}" method="post">
-    		<input type="hidden" name="email" th:value="${user.email}">
-    		<button type="submit">Generate Token</button>
-		</form>
+    		<button type="submit" class="gen-btn">Generate Token</button>
+		</form><br>
+		<form th:action="@{/user/login}" method="get" style="display: inline;">
+        <button type="submit" class="exit-btn">
+            🚪 Exit
+        </button>
+    </form>
 	<div th:if="${tokenNumber != null}">
     	<p style="margin-top: 20px; font-size: 18px; color: green;">
         Your Token Number: <strong th:text="${tokenNumber}"></strong>
